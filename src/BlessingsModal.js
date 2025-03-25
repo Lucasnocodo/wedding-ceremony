@@ -1,4 +1,3 @@
-// /src/BlessingsModal.js
 import React, { useState } from "react";
 import styled from "styled-components";
 import { addBlessing } from "./api";
@@ -9,7 +8,7 @@ const ModalOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   z-index: 10;
   display: flex;
   align-items: center;
@@ -17,30 +16,31 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
+  background: linear-gradient(135deg, #ffb6c1, #ffc0cb);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  padding: 30px;
   width: 90%;
   max-width: 500px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
 `;
 
 const Title = styled.h2`
   margin-bottom: 20px;
-  color: #333;
+  color: #fff;
+  font-family: 'Brush Script MT', cursive;
+  font-size: 2rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 `;
 
 const TextArea = styled.textarea`
   width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: 8px;
   resize: vertical;
   font-size: 1rem;
-`;
-
-const InputFile = styled.input`
-  margin-top: 10px;
 `;
 
 const ButtonRow = styled.div`
@@ -51,7 +51,7 @@ const ButtonRow = styled.div`
 `;
 
 const Button = styled.button`
-  padding: 8px 12px;
+  padding: 10px 16px;
   font-size: 1rem;
   border: none;
   border-radius: 8px;
@@ -72,38 +72,43 @@ const CancelButton = styled(Button)`
   }
 `;
 
-const BlessingsModal = ({ onClose }) => {
+const BlessingsModal = ({ onClose, onNewBlessing }) => {
   const [message, setMessage] = useState("");
-  const [file, setFile] = useState(null);
+  const [notification, setNotification] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       // 送出祝福到 Firestore
       const newId = await addBlessing({ text: message });
+      // 建立新祝福物件，createdAt 這裡以 client 時間代替 (或可直接由 Firestore 生成)
+      const newBlessing = { id: newId, text: message, createdAt: new Date() };
+      if (typeof onNewBlessing === "function") {
+        onNewBlessing(newBlessing);
+      }
       console.log("Blessing added with ID:", newId);
-      alert("祝福已送出！");
+      // 設定柔和提示訊息，2秒後關閉 Modal
+      setNotification("祝福已送出！");
+      setTimeout(() => {
+        onClose();
+      }, 2000);
     } catch (error) {
-      alert("送出祝福失敗，請稍後再試。");
+      setNotification("送出祝福失敗，請稍後再試。");
+      console.error("Error adding blessing: ", error);
     }
-    onClose();
   };
 
   return (
-    <ModalOverlay>
-      <ModalContent>
-        <Title>送上祝福</Title>
+    <ModalOverlay onClick={onClose}>
+      <ModalContent onClick={(e) => e.stopPropagation()}>
+        <Title>送上公開祝福</Title>
+        {notification && <p>{notification}</p>}
         <form onSubmit={handleSubmit}>
           <TextArea
             rows="4"
-            placeholder="在這裡寫下你的祝福..."
+            placeholder="ex: 達:祝福你們長長久久"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-          />
-          <InputFile
-            type="file"
-            onChange={(e) => setFile(e.target.files[0])}
-            accept="image/*,video/*,audio/*"
           />
           <ButtonRow>
             <CancelButton type="button" onClick={onClose}>

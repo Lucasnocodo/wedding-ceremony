@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import BlessingsModal from "./BlessingsModal";
 import FallGirl from "./pics/fallgirl.png";
@@ -8,6 +8,8 @@ import cross from "./pics/cross.png";
 import mute from "./pics/mute.png";
 import soundsOn from "./pics/soundsOn.png";
 import yt from "./pics/yt.png";
+import { getBlessings } from "./api";
+
 // 星星閃爍動畫
 const twinkle = keyframes`
   0%, 100% { opacity: 0.3; }
@@ -60,7 +62,6 @@ const BlackOverlay = styled.div`
   z-index: 0;
 `;
 
-
 // 頁面標題
 const Header = styled.h1`
   font-size: 3rem;
@@ -77,11 +78,12 @@ const Header = styled.h1`
 
 // 影片播放器容器
 const VideoContainer = styled.div`
-  width: 90%;
+  width: 100%;
   max-width: 800px;
-  border-radius: 12px;
+  height:  400px;
+  /* border-radius: 12px; */
   overflow: hidden;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); */
   z-index: 1;
 
   /* RWD：在小螢幕上縮小最大寬度 */
@@ -93,11 +95,6 @@ const VideoContainer = styled.div`
   }
 `;
 
-// 影片播放器元素
-const Video = styled.video`
-  width: 100%;
-  display: block;
-`;
 
 // 按鈕容器
 const ButtonContainer = styled.div`
@@ -145,6 +142,7 @@ const CoupleContainer = styled.div`
   position: absolute;
   bottom: calc((-1500px - 50vh)/5);
   max-height: 700px;
+  pointer-events: none;
 
   /* RWD：縮小容器，避免角色擠不下 */
   @media (max-width: 768px) {
@@ -194,6 +192,7 @@ const FallGirlImage = styled.img`
   animation: ${fallGirlCycle} 35s infinite;
   margin-right: -40px;
   pointer-events: none;
+  user-select: none;
   /* RWD：在小螢幕上縮小角色大小 */
   @media (max-width: 768px) {
     width: 500px;
@@ -208,6 +207,7 @@ const FallGuyImage = styled.img`
   margin-left: -70px;
   margin-top: -190px;
   pointer-events: none;
+  user-select: none;
   /* RWD：在小螢幕上縮小角色大小 */
   @media (max-width: 768px) {
     width: 500px;
@@ -223,6 +223,7 @@ const PCOnly = styled.div`
   align-items: center;
   justify-content: flex-start;
   height: 100vh;
+  user-select: none;
   @media (max-width: 768px) {
     display: none;
   }
@@ -265,6 +266,8 @@ const CrossButton = styled.img`
   left: 30px;
   bottom: 22px;
   cursor: pointer;
+  user-select: none;
+  pointer-events: auto;
 `;
 
 /* A 按鈕 */
@@ -274,6 +277,8 @@ const AButton = styled.img`
   height: 54px;
   right: 21px;
   top: 10px;
+  user-select: none;
+  pointer-events: auto;
   cursor: pointer;
 `;
 
@@ -284,6 +289,8 @@ const BButton = styled.img`
   height: 54px;
   right: 57px;
   bottom: 20px;
+  user-select: none;
+  pointer-events: auto;
   cursor: pointer;
 `;
 
@@ -291,7 +298,6 @@ function HomePage() {
   // 產生 50 顆隨機星星
   const starCount = 50;
 
-  // useMemo 僅在組件掛載時運算一次
   const stars = useMemo(() => {
     return Array.from({ length: starCount }).map(() => {
       return {
@@ -304,7 +310,16 @@ function HomePage() {
   }, []);
 
   const [showModal, setShowModal] = useState(false);
-  console.log('showModal', showModal)
+  const [blessings, setBlessings] = useState([]);
+
+  useEffect(() => {
+    getBlessings().then(data => setBlessings(data));
+  }, []);
+
+  const handleNewBlessing = (newBlessing) => {
+    setBlessings(prev => [...prev, newBlessing]);
+  };
+
   const handleBlessingModalOpen = () => {
     setShowModal(true)
   }
@@ -330,12 +345,17 @@ function HomePage() {
 
         {/* 影片區 */}
         <VideoContainer>
-          <Video controls>
-            <source src="/your-wedding-vlog.mp4" type="video/mp4" />
-            您的瀏覽器不支援影片播放。
-          </Video>
+          <iframe
+            width="100%"
+            height="100%"
+            src="https://www.youtube.com/embed/Y2E71oe0aSM?autoplay=1&controls=0&loop=1&playlist=Y2E71oe0aSM&modestbranding=1&mute=0"
+            frameBorder="0"
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+            title="YouTube Video"
+          ></iframe>
         </VideoContainer>
-
+        {/* <BannerImg src={LT} /> */}
         {/* 按鈕區 */}
         <ButtonContainer>
           <Button>觀看影片</Button>
@@ -352,7 +372,15 @@ function HomePage() {
 
         {/* 螢幕區 - 可用來放影片或其它內容 */}
         <ScreenContainer>
-          {/* 如果要放影片，可直接用 <video>；或放一張圖示意也行 */}
+          <iframe
+            width="100%"
+            height="100%"
+            src="https://www.youtube.com/embed/Y2E71oe0aSM?autoplay=1&controls=0&loop=1&playlist=Y2E71oe0aSM&modestbranding=1&mute=0"
+            frameBorder="0"
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+            title="YouTube Video"
+          ></iframe>
         </ScreenContainer>
 
         {/* 按鈕區 */}
@@ -365,8 +393,13 @@ function HomePage() {
       </MobileOnly>
 
       {/* 祝福 Modal 與展示 */}
-      {showModal && <BlessingsModal onClose={() => setShowModal(false)} />}
-      <BlessingsDisplay />
+      {showModal && (
+        <BlessingsModal
+          onClose={() => setShowModal(false)}
+          onNewBlessing={handleNewBlessing}
+        />
+      )}
+      <BlessingsDisplay blessings={blessings} />
     </Container>
   );
 }
