@@ -8,6 +8,7 @@ import cross from "./pics/cross.png";
 import mute from "./pics/mute.png";
 import soundsOn from "./pics/soundsOn.png";
 import yt from "./pics/yt.png";
+import weddingV from './pics/wedding-vlog.mov'
 import { getBlessings } from "./api";
 
 
@@ -69,7 +70,8 @@ const BlackOverlay = styled.div`
 // 影片播放器容器
 const VideoContainer = styled.div`
   width: 100vw;
-  height:  300px;
+  height: auto;
+  max-height: 30vh;
   overflow: hidden;
   z-index: 1;
 `;
@@ -77,11 +79,13 @@ const VideoContainer = styled.div`
 
 // 按鈕容器
 const ButtonContainer = styled.div`
-  margin-top: 20px;
+  margin-top: 50px;
+  margin-bottom: 20px;
   z-index: 1;
   display: flex;
   width: 100%;
-  justify-content: space-around;
+  gap: 200px;
+  justify-content: center;
 `;
 
 // 通用按鈕樣式
@@ -112,18 +116,16 @@ const CoupleContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 320px;
-  position: absolute;
-  bottom: calc((-1000px - 50vh)/5);
+  /* bottom: calc((-1000px - 50vh)/5); */
   max-height: 700px;
   pointer-events: none;
   width: 100%;
 
   /* RWD：縮小容器，避免角色擠不下 */
   @media (max-width: 768px) {
-    position: absolute;
-    width: 240px;
-    bottom: -250px;
+    /* position: absolute; */
+    height: 500px;
+
   }
 `;
 
@@ -170,7 +172,7 @@ const FallGirlImage = styled.img`
   user-select: none;
   /* RWD：在小螢幕上縮小角色大小 */
   @media (max-width: 768px) {
-    width: 128vw;
+    width: 100vw;
     margin-right: -40px;
   }
 `;
@@ -185,7 +187,7 @@ const FallGuyImage = styled.img`
   user-select: none;
   /* RWD：在小螢幕上縮小角色大小 */
   @media (max-width: 768px) {
-    width: 128vw;
+    width: 100vw;
     margin-left: -105px;
     margin-top: -85px;
   }
@@ -197,7 +199,6 @@ const PCOnly = styled.div`
   width: 100%;
   align-items: center;
   justify-content: flex-start;
-  height: 100vh;
   user-select: none;
   @media (max-width: 768px) {
     display: none;
@@ -207,9 +208,9 @@ const PCOnly = styled.div`
 const MobileOnly = styled.div`
   display: none;
   @media (max-width: 768px) {
-    display: block;
-    position: absolute;
-    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 `;
 
@@ -230,7 +231,7 @@ const ScreenContainer = styled.div`
 const ControlsContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 150px; /* 手把區的高度，可依需求調整 */
+  height: 150px; 
 `;
 
 /* 十字按鈕 */
@@ -276,6 +277,16 @@ const GameBoyContainer = styled.div`
   position: relative;
 `;
 
+const BannerVideo = styled.video`
+  object-fit: cover;
+  object-position: center;
+`
+
+const GameBoyVideo = styled.video`
+  height: 100%;
+  width: 100%;
+`
+
 
 function HomePage() {
   // 產生 50 顆隨機星星
@@ -294,7 +305,7 @@ function HomePage() {
 
   const [showModal, setShowModal] = useState(false);
   const [blessings, setBlessings] = useState([]);
-  const [optimisticBlessings, setOptimisticBlessings] = useState({});
+  const [optimisticBlessings, setOptimisticBlessings] = useState(null);
   const [isMuted, setIsMuted] = useState(false);
   const playerRef = useRef(null);
 
@@ -334,15 +345,15 @@ function HomePage() {
   };
 
   const toggleMute = () => {
-    if (playerRef.current) {
-      if (isMuted) {
-        playerRef.current.unMute();
-        setIsMuted(false);
-      } else {
-        playerRef.current.mute();
-        setIsMuted(true);
-      }
-    }
+    // if (playerRef.current) {
+    //   if (isMuted) {
+    //     playerRef.current.unMute();
+    //     setIsMuted(false);
+    //   } else {
+    //     playerRef.current.mute();
+    //     setIsMuted(true);
+    //   }
+    // }
   };
 
   const openYouTube = () => {
@@ -376,7 +387,7 @@ function HomePage() {
 
         {/* 影片區 */}
         <VideoContainer>
-          <iframe
+          {/* <iframe
             width="100%"
             height="100%"
             src="https://www.youtube.com/embed/Y2E71oe0aSM?autoplay=1&controls=0&loop=1&playlist=Y2E71oe0aSM&modestbranding=1&mute=0"
@@ -384,7 +395,8 @@ function HomePage() {
             allow="autoplay; encrypted-media"
             allowFullScreen
             title="YouTube Video"
-          ></iframe>
+          ></iframe> */}
+          <BannerVideo src={weddingV} autoPlay muted loop />
         </VideoContainer>
         {/* <BannerImg src={LT} /> */}
         {/* 按鈕區 */}
@@ -394,16 +406,13 @@ function HomePage() {
         </ButtonContainer>
 
       </PCOnly>
-      {/* 角色動畫區 */}
-      <CoupleContainer>
-        <FallGirlImage src={FallGirl} alt="Fall Girl" />
-        <FallGuyImage src={FallGuy} alt="Fall Guy" />
-      </CoupleContainer>
       <MobileOnly>
         <GameBoyContainer>
 
-        <ScreenContainer id="player" />
-
+        <ScreenContainer>
+          
+        <GameBoyVideo src={weddingV} autoPlay muted loop />
+        </ScreenContainer>
           {/* 按鈕區 */}
           <ControlsContainer>
             <CrossButton src={cross} onClick={() => setShowModal(true)} />
@@ -413,7 +422,10 @@ function HomePage() {
         </GameBoyContainer>
 
       </MobileOnly>
-
+      <CoupleContainer>
+        <FallGirlImage src={FallGirl} alt="Fall Girl" />
+        <FallGuyImage src={FallGuy} alt="Fall Guy" />
+      </CoupleContainer>
       {/* 祝福 Modal 與展示 */}
       {showModal && (
         <BlessingsModal

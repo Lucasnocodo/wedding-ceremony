@@ -69,16 +69,16 @@ const LayerTwoContainer = styled.div`
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 130px;
+  height: 260px;
   pointer-events: none;
   z-index: 2;
 
   @media (min-width: 769px) {
-    height: 250px;
+    height: 500px;
   }
 `;
 
-const BlessingsDisplay = ({optimisticBlessing}) => {
+const BlessingsDisplay = ({ optimisticBlessing }) => {
   const [blessings, setBlessings] = useState([]);
 
   useEffect(() => {
@@ -154,14 +154,17 @@ const BlessingsDisplay = ({optimisticBlessing}) => {
         if (attempts > 50) break;
       } while (placedPositions.some(pos => isTooClose(pos, currentPos)));
       placedPositions.push(currentPos);
-      return (
-        <BlessingItem
+      console.log('blessing', blessing)
+      return (<>
+        {blessing && <BlessingItem
           key={`${blessing?.id}-layer2-${index}`}
           blessing={blessing}
           style={{ top: `${top}%`, left: `${left}%` }}
         />
+        }
+      </>
       );
-    });
+    })
   };
 
   return (
