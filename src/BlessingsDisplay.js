@@ -14,8 +14,6 @@ const BlessingCard = styled.div`
   backdrop-filter: blur(10px);
   padding: 8px 12px;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  /* max-width: 200px; */
   font-size: 0.9rem;
   color: #333;
   animation: ${float} 5s ease-in-out infinite;
@@ -25,23 +23,19 @@ const BlessingCard = styled.div`
   pointer-events: auto;
 `;
 
-
-
 const BlessingItem = ({ blessing, style }) => {
-  const [loveCount, setLoveCount] = useState(blessing.loveCount || 0);
+  const [loveCount, setLoveCount] = useState(blessing?.loveCount || 0);
   const lastUpdateRef = useRef(0);
 
   const handleLike = async () => {
     const now = Date.now();
     if (now - lastUpdateRef.current < 500) {
-      // 少於 0.5 秒則忽略
       return;
     }
     lastUpdateRef.current = now;
     const newCount = loveCount + 1;
     setLoveCount(newCount);
     try {
-      // 呼叫 API 更新 Firestore 中的 loveCount
       await updateLoveCount(blessing.id, newCount);
     } catch (error) {
       console.error("Error updating love count", error);
@@ -50,7 +44,7 @@ const BlessingItem = ({ blessing, style }) => {
 
   return (
     <BlessingCard style={style} onClick={handleLike}>
-      {blessing.text} {loveCount > 0 && <span>💙 {loveCount}</span>}
+      {blessing?.text} {loveCount > 0 && <span>🤍 {loveCount}</span>}
     </BlessingCard>
   );
 };
@@ -64,28 +58,27 @@ const LayerOneContainer = styled.div`
   height: calc(100% - 450px);
   pointer-events: none;
   z-index: 0;
-
   @media (min-width: 769px) {
     height: calc(100% - 200px);
   }
 `;
 
-// LayerTwo：從螢幕底部向上 160px 區域，z-index: 2
+
 const LayerTwoContainer = styled.div`
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 160px;
+  height: 130px;
   pointer-events: none;
   z-index: 2;
 
   @media (min-width: 769px) {
-    height: 400px;
+    height: 250px;
   }
 `;
 
-const BlessingsDisplay = () => {
+const BlessingsDisplay = ({optimisticBlessing}) => {
   const [blessings, setBlessings] = useState([]);
 
   useEffect(() => {
@@ -149,7 +142,7 @@ const BlessingsDisplay = () => {
 
   const renderLayerTwo = () => {
     const placedPositions = [];
-    return layerTwoBlessings.map((blessing, index) => {
+    return [...layerTwoBlessings, optimisticBlessing].map((blessing, index) => {
       let top, left;
       let currentPos;
       let attempts = 0;
@@ -163,7 +156,7 @@ const BlessingsDisplay = () => {
       placedPositions.push(currentPos);
       return (
         <BlessingItem
-          key={`${blessing.id}-layer2-${index}`}
+          key={`${blessing?.id}-layer2-${index}`}
           blessing={blessing}
           style={{ top: `${top}%`, left: `${left}%` }}
         />

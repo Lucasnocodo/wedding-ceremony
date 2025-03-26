@@ -24,12 +24,12 @@ const ModalContent = styled.div`
   max-width: 500px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
   pointer-events: auto;
+  margin: 1rem;
 `;
 
 const Title = styled.h2`
   margin-bottom: 20px;
   color: #fff;
-  font-family: 'Brush Script MT', cursive;
   font-size: 2rem;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 `;
@@ -74,27 +74,17 @@ const CancelButton = styled(Button)`
 
 const BlessingsModal = ({ onClose, onNewBlessing }) => {
   const [message, setMessage] = useState("");
-  const [notification, setNotification] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // 送出祝福到 Firestore
       const newId = await addBlessing({ text: message });
-      // 建立新祝福物件，createdAt 這裡以 client 時間代替 (或可直接由 Firestore 生成)
       const newBlessing = { id: newId, text: message, createdAt: new Date() };
-      if (typeof onNewBlessing === "function") {
-        onNewBlessing(newBlessing);
-      }
-      console.log("Blessing added with ID:", newId);
-      // 設定柔和提示訊息，2秒後關閉 Modal
-      setNotification("祝福已送出！");
-      setTimeout(() => {
-        onClose();
-      }, 2000);
+      onNewBlessing(newBlessing);
+      onClose();
     } catch (error) {
-      setNotification("送出祝福失敗，請稍後再試。");
       console.error("Error adding blessing: ", error);
+      onClose();
     }
   };
 
@@ -102,7 +92,6 @@ const BlessingsModal = ({ onClose, onNewBlessing }) => {
     <ModalOverlay onClick={onClose}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <Title>送上公開祝福</Title>
-        {notification && <p>{notification}</p>}
         <form onSubmit={handleSubmit}>
           <TextArea
             rows="4"
