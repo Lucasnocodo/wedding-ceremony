@@ -12,7 +12,7 @@ import LT from "./pics/LT.jpg";
 import weddingV from "./pics/wedding-vlog.mov";
 import { getBlessings } from "./api";
 
-const VIDEO_ID = "Y2E71oe0aSM"; // Replace with your YouTube video ID
+const VIDEO_ID = "npEFXqZdnSA";
 
 // Star animation and component remain unchanged
 const twinkle = keyframes`
@@ -246,16 +246,29 @@ const ControlsContainer = styled.div`
 `;
 
 /* Mobile buttons (unchanged) */
-const CrossButton = styled.img`
+const CrossButtonContainer =styled.div`
   position: absolute;
-  width: 120px;
-  height: 120px;
   left: 30px;
   bottom: 22px;
+`
+const CrossButton = styled.img`
+  width: 120px;
+  height: 120px;
   cursor: pointer;
   user-select: none;
   pointer-events: auto;
 `;
+
+const CrossText = styled.span`
+  z-index: 1;
+  position: absolute;
+  left: 51.5%;
+  top: 47%;
+  width: 70px;
+  transform: translate(-50%, -50%);
+  color: #ba1b4d;
+  font-weight: bold;
+`
 
 const AButton = styled.img`
   position: absolute;
@@ -351,7 +364,7 @@ function HomePage() {
           />
         </VideoContainer>
         <ButtonContainer>
-          <Button>Youtube上觀看影片</Button>
+          <Button onClick={openYouTube}>Youtube上觀看影片</Button>
           <Button onClick={handleBlessingModalOpen}>送上祝福</Button>
         </ButtonContainer>
       </PCOnly>
@@ -370,7 +383,10 @@ function HomePage() {
             />
           </ScreenContainer>
           <ControlsContainer>
+            <CrossButtonContainer>
             <CrossButton src={cross} onClick={() => setShowModal(true)} />
+              <CrossText>送上祝福</CrossText>
+            </CrossButtonContainer>
             <AButton src={isMuted ? soundsOn : mute} onClick={toggleMute} />
             <BButton src={yt} onClick={openYouTube} />
           </ControlsContainer>
