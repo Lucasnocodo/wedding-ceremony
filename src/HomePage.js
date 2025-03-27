@@ -41,7 +41,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   overflow: hidden;
 `;
 
@@ -315,7 +315,7 @@ function HomePage() {
 
 
   const toggleMute = () => {
-    setIsMuted(pre=> !pre)
+    setIsMuted(pre => !pre)
   };
 
   const openYouTube = () => {
@@ -346,7 +346,6 @@ function HomePage() {
         ))}
       </BackgroundDecoration>
       <PCOnly>
-
         {/* 影片區 */}
         <VideoContainer>
           <BannerVideo src={weddingV} autoPlay muted loop />
@@ -356,15 +355,12 @@ function HomePage() {
           <Button>Youtube上觀看影片</Button>
           <Button onClick={handleBlessingModalOpen}>送上祝福</Button>
         </ButtonContainer>
-
       </PCOnly>
       <MobileOnly>
         <GameBoyContainer>
-
-        <ScreenContainer>
-          
-        <GameBoyVideo src={weddingV} autoPlay muted={isMuted} loop />
-        </ScreenContainer>
+          <ScreenContainer>
+            <GameBoyVideo src={weddingV} autoPlay muted={isMuted} loop playsInline />
+          </ScreenContainer>
           {/* 按鈕區 */}
           <ControlsContainer>
             <CrossButton src={cross} onClick={() => setShowModal(true)} />
@@ -372,7 +368,6 @@ function HomePage() {
             <BButton src={yt} onClick={openYouTube} />
           </ControlsContainer>
         </GameBoyContainer>
-
       </MobileOnly>
       <CoupleContainer>
         <FallGirlImage src={FallGirl} alt="Fall Girl" />

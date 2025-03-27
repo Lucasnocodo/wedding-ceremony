@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { updateLoveCount, getBlessings } from './api'; // 確保在 api.js 中新增 updateLoveCount API
@@ -59,7 +60,7 @@ const LayerOneContainer = styled.div`
   pointer-events: none;
   z-index: 0;
   @media (min-width: 769px) {
-    height: calc(100% - 200px);
+    height: calc(100vh - 200px);
   }
 `;
 
@@ -69,7 +70,7 @@ const LayerTwoContainer = styled.div`
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 260px;
+  height: 300px;
   pointer-events: none;
   z-index: 2;
 
@@ -143,6 +144,7 @@ const BlessingsDisplay = ({ optimisticBlessing }) => {
   const renderLayerTwo = () => {
     const placedPositions = [];
     return [...layerTwoBlessings, optimisticBlessing].map((blessing, index) => {
+      if (!blessing) return null; // 避免 undefined
       let top, left;
       let currentPos;
       let attempts = 0;
@@ -154,17 +156,15 @@ const BlessingsDisplay = ({ optimisticBlessing }) => {
         if (attempts > 50) break;
       } while (placedPositions.some(pos => isTooClose(pos, currentPos)));
       placedPositions.push(currentPos);
-
-      return (<>
-        {blessing && <BlessingItem
-          key={`${blessing?.id}-layer2-${index}`}
+  
+      return (
+        <BlessingItem
+          key={`${blessing.id}-layer2-${index}`}
           blessing={blessing}
           style={{ top: `${top}%`, left: `${left}%` }}
         />
-        }
-      </>
       );
-    })
+    });
   };
 
   return (
@@ -175,4 +175,4 @@ const BlessingsDisplay = ({ optimisticBlessing }) => {
   );
 };
 
-export default BlessingsDisplay;
+export default React.memo(BlessingsDisplay);
