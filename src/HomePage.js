@@ -8,6 +8,7 @@ import cross from "./pics/cross.png";
 import mute from "./pics/mute.png";
 import soundsOn from "./pics/soundsOn.png";
 import yt from "./pics/yt.png";
+import LT from "./pics/LT.jpg";
 import weddingV from './pics/wedding-vlog.mov'
 import { getBlessings } from "./api";
 
@@ -288,6 +289,12 @@ const GameBoyVideo = styled.video`
   object-fit: cover;
 `
 
+const BannerImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  `;
 
 function HomePage() {
   // 產生 50 顆隨機星星
@@ -308,7 +315,7 @@ function HomePage() {
   const [blessings, setBlessings] = useState([]);
   const [optimisticBlessings, setOptimisticBlessings] = useState(null);
   const [isMuted, setIsMuted] = useState(true);
-
+  const [videoReady, setVideoReady] = useState(false);
   useEffect(() => {
     getBlessings().then(data => setBlessings(data));
   }, []);
@@ -348,7 +355,15 @@ function HomePage() {
       <PCOnly>
         {/* 影片區 */}
         <VideoContainer>
-          <BannerVideo src={weddingV} autoPlay muted loop />
+          {!videoReady && <BannerImage src={LT} alt="Thumbnail" />}
+          <BannerVideo
+            src={weddingV}
+            autoPlay
+            muted
+            loop
+            onCanPlay={() => setVideoReady(true)}
+            style={{ display: videoReady ? 'block' : 'none' }}
+          />
         </VideoContainer>
         {/* 按鈕區 */}
         <ButtonContainer>
@@ -359,7 +374,15 @@ function HomePage() {
       <MobileOnly>
         <GameBoyContainer>
           <ScreenContainer>
-            <GameBoyVideo src={weddingV} autoPlay muted={isMuted} loop playsInline />
+            {!videoReady && <BannerImage src={LT} alt="Thumbnail" />}
+            <GameBoyVideo
+              src={weddingV}
+              autoPlay
+              muted={isMuted}
+              loop
+              playsInline
+              onCanPlay={() => setVideoReady(true)}
+              style={{ display: videoReady ? 'block' : 'none' }} />
           </ScreenContainer>
           {/* 按鈕區 */}
           <ControlsContainer>
