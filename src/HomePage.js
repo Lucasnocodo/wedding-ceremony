@@ -9,19 +9,17 @@ import mute from "./pics/mute.png";
 import soundsOn from "./pics/soundsOn.png";
 import yt from "./pics/yt.png";
 import LT from "./pics/LT.jpg";
-import weddingV from './pics/wedding-vlog.mov'
+import weddingV from "./pics/wedding-vlog.mov";
 import { getBlessings } from "./api";
 
+const VIDEO_ID = "Y2E71oe0aSM"; // Replace with your YouTube video ID
 
-const VIDEO_ID = "Y2E71oe0aSM"; // 請替換成你的 YouTube 影片 ID
-
-// 星星閃爍動畫
+// Star animation and component remain unchanged
 const twinkle = keyframes`
   0%, 100% { opacity: 0.3; }
   50% { opacity: 1; }
 `;
 
-// 星星元件
 const Star = styled.div`
   position: absolute;
   background: white;
@@ -34,7 +32,7 @@ const Star = styled.div`
   opacity: 0.8;
 `;
 
-// 主要容器，設定夢幻背景與排版
+// Main container
 const Container = styled.div`
   position: relative;
   min-height: 100vh;
@@ -46,7 +44,7 @@ const Container = styled.div`
   overflow: hidden;
 `;
 
-// 背景裝飾區，放置星星
+// Background decoration and black overlay
 const BackgroundDecoration = styled.div`
   position: absolute;
   top: 0;
@@ -56,7 +54,6 @@ const BackgroundDecoration = styled.div`
   pointer-events: none;
 `;
 
-// 黑色遮罩
 const BlackOverlay = styled.div`
   position: absolute;
   top: 0;
@@ -67,8 +64,7 @@ const BlackOverlay = styled.div`
   z-index: 0;
 `;
 
-
-// 影片播放器容器
+// Video container for PC view (with thumbnail display)
 const VideoContainer = styled.div`
   width: 100vw;
   height: auto;
@@ -77,8 +73,20 @@ const VideoContainer = styled.div`
   z-index: 1;
 `;
 
+const BannerVideo = styled.video`
+  width: 100vw;
+  object-fit: cover;
+  object-position: center;
+`;
 
-// 按鈕容器
+const BannerImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+`;
+
+// Button container for PC view
 const ButtonContainer = styled.div`
   margin-top: 50px;
   margin-bottom: 20px;
@@ -89,7 +97,7 @@ const ButtonContainer = styled.div`
   justify-content: center;
 `;
 
-// 通用按鈕樣式
+// Generic button styling
 const Button = styled.button`
   background: #ff7eb3;
   border: none;
@@ -103,34 +111,29 @@ const Button = styled.button`
     background: #ff5e99;
   }
 
-  /* RWD：縮小字體、調整 padding */
   @media (max-width: 768px) {
     font-size: 1rem;
     padding: 10px 20px;
   }
 `;
 
-// 夫妻角色動畫區塊
+// Couple container remains for PC view
 const CoupleContainer = styled.div`
   margin-top: 40px;
   z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* bottom: calc((-1000px - 50vh)/5); */
   max-height: 700px;
   pointer-events: none;
   width: 100%;
 
-  /* RWD：縮小容器，避免角色擠不下 */
   @media (max-width: 768px) {
-    /* position: absolute; */
     height: 500px;
-
   }
 `;
 
-// 飛入 + 漂浮 + 飛出 keyframes (節錄)
+// New keyframes for Fall Girl and Fall Guy animations with "kiss" effect
 const fallGirlCycle = keyframes`
   0% { transform: translateX(-150%) translateY(0); }
   6% { transform: translateX(0) translateY(0); }
@@ -144,6 +147,8 @@ const fallGirlCycle = keyframes`
   76.4% { transform: translateX(0) translateY(0); }
   85.2% { transform: translateX(0) translateY(-10px); }
   94% { transform: translateX(0) translateY(0); }
+  96% {transform: translateX(10%) translateY(0); /* Kiss */}
+  98% {transform: translateX(0) translateY(0);}
   100% { transform: translateX(-150%) translateY(0); }
 `;
 
@@ -160,10 +165,12 @@ const fallGuyCycle = keyframes`
   76.4% { transform: translateX(0) translateY(0); }
   85.2% { transform: translateX(0) translateY(-10px); }
   94% { transform: translateX(0) translateY(0); }
+  96% {transform: translateX(-10%) translateY(0); /* Kiss */}
+  98% {transform: translateX(0) translateY(0);}
   100% { transform: translateX(150%) translateY(0); }
 `;
 
-// 角色圖示
+// Updated Fall Girl and Fall Guy images using new keyframes
 const FallGirlImage = styled.img`
   width: 650px;
   height: auto;
@@ -171,7 +178,6 @@ const FallGirlImage = styled.img`
   margin-right: -70px;
   pointer-events: none;
   user-select: none;
-  /* RWD：在小螢幕上縮小角色大小 */
   @media (max-width: 768px) {
     width: 100vw;
     margin-right: -40px;
@@ -186,14 +192,14 @@ const FallGuyImage = styled.img`
   margin-top: -90px;
   pointer-events: none;
   user-select: none;
-  /* RWD：在小螢幕上縮小角色大小 */
   @media (max-width: 768px) {
     width: 100vw;
     margin-left: -105px;
     margin-top: -85px;
   }
 `;
-/* 僅在電腦版顯示 */
+
+// PC-only and Mobile-only containers
 const PCOnly = styled.div`
   display: flex;
   flex-direction: column;
@@ -205,7 +211,7 @@ const PCOnly = styled.div`
     display: none;
   }
 `;
-/* 僅在手機版顯示 */
+
 const MobileOnly = styled.div`
   display: none;
   @media (max-width: 768px) {
@@ -215,12 +221,17 @@ const MobileOnly = styled.div`
   }
 `;
 
+// Mobile: Game Boy style components
+const GameBoyContainer = styled.div`
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+`;
 
-/* 螢幕區域 (可放影片或其它內容) */
 const ScreenContainer = styled.div`
   position: relative;
   width: calc(100vw - 16px);
-  aspect-ratio: 4 / 3; /* 維持 4:3 比例 */
+  aspect-ratio: 4 / 3;
   background: #000;
   border: 8px solid #444;
   border-radius: 8px;
@@ -228,14 +239,13 @@ const ScreenContainer = styled.div`
   z-index: 2;
 `;
 
-/* 按鈕區域 (十字 + A + B) */
 const ControlsContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 150px; 
+  height: 150px;
 `;
 
-/* 十字按鈕 */
+/* Mobile buttons (unchanged) */
 const CrossButton = styled.img`
   position: absolute;
   width: 120px;
@@ -247,7 +257,6 @@ const CrossButton = styled.img`
   pointer-events: auto;
 `;
 
-/* A 按鈕 */
 const AButton = styled.img`
   position: absolute;
   width: 54px;
@@ -259,7 +268,6 @@ const AButton = styled.img`
   cursor: pointer;
 `;
 
-/* B 按鈕 */
 const BButton = styled.img`
   position: absolute;
   width: 54px;
@@ -271,35 +279,14 @@ const BButton = styled.img`
   cursor: pointer;
 `;
 
-// 遊戲機外框容器：限制手機版的顯示區域
-const GameBoyContainer = styled.div`
-  width: 100%;
-  margin: 0 auto;
-  position: relative;
-`;
-
-const BannerVideo = styled.video`
-  object-fit: cover;
-  object-position: center;
-`
-
 const GameBoyVideo = styled.video`
   height: 100%;
   width: 100%;
   object-fit: cover;
-`
-
-const BannerImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  `;
+`;
 
 function HomePage() {
-  // 產生 50 顆隨機星星
   const starCount = 50;
-
   const stars = useMemo(() => {
     return Array.from({ length: starCount }).map(() => {
       return {
@@ -316,13 +303,13 @@ function HomePage() {
   const [optimisticBlessings, setOptimisticBlessings] = useState(null);
   const [isMuted, setIsMuted] = useState(true);
   const [videoReady, setVideoReady] = useState(false);
+
   useEffect(() => {
-    getBlessings().then(data => setBlessings(data));
+    getBlessings().then((data) => setBlessings(data));
   }, []);
 
-
   const toggleMute = () => {
-    setIsMuted(pre => !pre)
+    setIsMuted((prev) => !prev);
   };
 
   const openYouTube = () => {
@@ -334,13 +321,12 @@ function HomePage() {
   };
 
   const handleBlessingModalOpen = () => {
-    setShowModal(true)
-  }
+    setShowModal(true);
+  };
 
   return (
     <Container>
       <BlackOverlay />
-      {/* 背景星星 */}
       <BackgroundDecoration>
         {stars.map((star, index) => (
           <Star
@@ -353,7 +339,6 @@ function HomePage() {
         ))}
       </BackgroundDecoration>
       <PCOnly>
-        {/* 影片區 */}
         <VideoContainer>
           {!videoReady && <BannerImage src={LT} alt="Thumbnail" />}
           <BannerVideo
@@ -362,10 +347,9 @@ function HomePage() {
             muted
             loop
             onCanPlay={() => setVideoReady(true)}
-            style={{ display: videoReady ? 'block' : 'none' }}
+            style={{ display: videoReady ? "block" : "none" }}
           />
         </VideoContainer>
-        {/* 按鈕區 */}
         <ButtonContainer>
           <Button>Youtube上觀看影片</Button>
           <Button onClick={handleBlessingModalOpen}>送上祝福</Button>
@@ -373,7 +357,7 @@ function HomePage() {
       </PCOnly>
       <MobileOnly>
         <GameBoyContainer>
-          <ScreenContainer>
+          <ScreenContainer id="player">
             {!videoReady && <BannerImage src={LT} alt="Thumbnail" />}
             <GameBoyVideo
               src={weddingV}
@@ -382,9 +366,9 @@ function HomePage() {
               loop
               playsInline
               onCanPlay={() => setVideoReady(true)}
-              style={{ display: videoReady ? 'block' : 'none' }} />
+              style={{ display: videoReady ? "block" : "none" }}
+            />
           </ScreenContainer>
-          {/* 按鈕區 */}
           <ControlsContainer>
             <CrossButton src={cross} onClick={() => setShowModal(true)} />
             <AButton src={isMuted ? soundsOn : mute} onClick={toggleMute} />
@@ -396,14 +380,16 @@ function HomePage() {
         <FallGirlImage src={FallGirl} alt="Fall Girl" />
         <FallGuyImage src={FallGuy} alt="Fall Guy" />
       </CoupleContainer>
-      {/* 祝福 Modal 與展示 */}
       {showModal && (
         <BlessingsModal
           onClose={() => setShowModal(false)}
           onNewBlessing={handleNewBlessing}
         />
       )}
-      <BlessingsDisplay blessings={blessings} optimisticBlessing={optimisticBlessings} />
+      <BlessingsDisplay
+        blessings={blessings}
+        optimisticBlessing={optimisticBlessings}
+      />
     </Container>
   );
 }

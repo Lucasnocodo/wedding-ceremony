@@ -54,12 +54,15 @@ const BlessingItem = ({ blessing, style }) => {
 const LayerOneContainer = styled.div`
   position: absolute;
   bottom: 0;
-  left: 0;
+  left: 50%;
   width: 100%;
+  margin: 0 auto;
+  transform: translateX(-50%);
   height: calc(100% - 450px);
   pointer-events: none;
   z-index: 0;
   @media (min-width: 769px) {
+    width: 1200px;
     height: calc(100vh - 200px);
   }
 `;
@@ -68,14 +71,15 @@ const LayerOneContainer = styled.div`
 const LayerTwoContainer = styled.div`
   position: absolute;
   bottom: 0;
-  left: 0;
+  left: 50%;
   width: 100%;
   height: 300px;
   pointer-events: none;
   z-index: 2;
-
+  transform: translateX(-50%);
   @media (min-width: 769px) {
     height: 500px;
+    width: 1200px;
   }
 `;
 
