@@ -154,7 +154,7 @@ const BlessingsDisplay = ({ optimisticBlessing }) => {
         if (attempts > 50) break;
       } while (placedPositions.some(pos => isTooClose(pos, currentPos)));
       placedPositions.push(currentPos);
-      console.log('blessing', blessing)
+
       return (<>
         {blessing && <BlessingItem
           key={`${blessing?.id}-layer2-${index}`}

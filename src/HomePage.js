@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import BlessingsModal from "./BlessingsModal";
 import FallGirl from "./pics/fallgirl.png";
@@ -285,6 +285,7 @@ const BannerVideo = styled.video`
 const GameBoyVideo = styled.video`
   height: 100%;
   width: 100%;
+  object-fit: cover;
 `
 
 
@@ -306,54 +307,15 @@ function HomePage() {
   const [showModal, setShowModal] = useState(false);
   const [blessings, setBlessings] = useState([]);
   const [optimisticBlessings, setOptimisticBlessings] = useState(null);
-  const [isMuted, setIsMuted] = useState(false);
-  const playerRef = useRef(null);
+  const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
     getBlessings().then(data => setBlessings(data));
   }, []);
 
-  useEffect(() => {
-    if (!window.YT) {
-      const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
-      const firstScriptTag = document.getElementsByTagName("script")[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    } else {
-      onYouTubeIframeAPIReady();
-    }
-    window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
-  }, []);
-
-  const onYouTubeIframeAPIReady = () => {
-    playerRef.current = new window.YT.Player("player", {
-      videoId: VIDEO_ID,
-      playerVars: {
-        autoplay: 1,
-        controls: 0,
-        loop: 1,
-        playlist: VIDEO_ID,
-        modestbranding: 1,
-        mute: isMuted ? 1 : 0
-      },
-      events: {
-        onReady: (event) => {
-          event.target.playVideo();
-        }
-      }
-    });
-  };
 
   const toggleMute = () => {
-    // if (playerRef.current) {
-    //   if (isMuted) {
-    //     playerRef.current.unMute();
-    //     setIsMuted(false);
-    //   } else {
-    //     playerRef.current.mute();
-    //     setIsMuted(true);
-    //   }
-    // }
+    setIsMuted(pre=> !pre)
   };
 
   const openYouTube = () => {
@@ -387,18 +349,8 @@ function HomePage() {
 
         {/* 影片區 */}
         <VideoContainer>
-          {/* <iframe
-            width="100%"
-            height="100%"
-            src="https://www.youtube.com/embed/Y2E71oe0aSM?autoplay=1&controls=0&loop=1&playlist=Y2E71oe0aSM&modestbranding=1&mute=0"
-            frameBorder="0"
-            allow="autoplay; encrypted-media"
-            allowFullScreen
-            title="YouTube Video"
-          ></iframe> */}
           <BannerVideo src={weddingV} autoPlay muted loop />
         </VideoContainer>
-        {/* <BannerImg src={LT} /> */}
         {/* 按鈕區 */}
         <ButtonContainer>
           <Button>Youtube上觀看影片</Button>
@@ -411,7 +363,7 @@ function HomePage() {
 
         <ScreenContainer>
           
-        <GameBoyVideo src={weddingV} autoPlay muted loop />
+        <GameBoyVideo src={weddingV} autoPlay muted={isMuted} loop />
         </ScreenContainer>
           {/* 按鈕區 */}
           <ControlsContainer>
