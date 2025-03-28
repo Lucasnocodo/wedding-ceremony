@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { updateLoveCount, getBlessings } from './api'; // 確保在 api.js 中新增 updateLoveCount API
 
+
+const offset = 20
 const float = keyframes`
   0% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
@@ -126,7 +128,7 @@ const BlessingsDisplay = ({ optimisticBlessing }) => {
       let attempts = 0;
       do {
         top = Math.random() * 100;
-        left = Math.random() * 100;
+        left = (Math.random() * 100 - offset);
         currentPos = { top, left };
         attempts++;
         if (attempts > 50) break;
@@ -154,7 +156,7 @@ const BlessingsDisplay = ({ optimisticBlessing }) => {
       let attempts = 0;
       do {
         top = Math.random() * 100;
-        left = Math.random() * 100;
+        left = (Math.random() * 100 - offset);
         currentPos = { top, left };
         attempts++;
         if (attempts > 50) break;

@@ -20,6 +20,7 @@ const ModalContent = styled.div`
   border: 2px solid rgba(255, 255, 255, 0.8);
   border-radius: 16px;
   padding: 30px;
+  padding-top: 0;
   width: 90%;
   max-width: 500px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -35,7 +36,7 @@ const Title = styled.h2`
 `;
 
 const TextArea = styled.textarea`
-  width: 100%;
+  width: 95%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 8px;
